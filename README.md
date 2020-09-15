@@ -3,3 +3,6 @@
 * Rob Rouse
 * Jaron Smith
 * Yuvraj Subedi
+
+**Gene Info**
+* E, envelope protein, protein_id="YP_009724392.1"
