@@ -7,4 +7,5 @@ def getCDNA(rna):
     cdna = cdna.replace("C", "X")
     cdna = cdna.replace("G", "C")
     cdna = cdna.replace("X", "G")
+    cdna = cdna[::-1]  # reverse complementary strand
     return cdna
