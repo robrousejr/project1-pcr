@@ -20,8 +20,8 @@ file.close()
 
 SARS_COV2_genome = SARS_COV2_genome.replace('\n','')
 
-# extract E gene from 21563:25384
-S_gene = SARS_COV2_genome[26245:26472]   # rna sequence
+# extract E gene from 26245:26472
+E_gene = SARS_COV2_genome[26245:26472]   # rna sequence
 
 
 
