@@ -25,4 +25,7 @@ SARS_COV2_genome = SARS_COV2_genome.replace('\n','')
 # extract E gene from 26245:26472
 E_gene = SARS_COV2_genome[26245:26472]   # rna sequence
 
+# Primer pair 7 (Sequence, GC, start, end)
+forwardPrimer = ("CATTCGTTTCGGAAGAGACAGG", 0.5, 7, 28)
+reversePrimer = ("ATTGCAGCAGTACGCACACA", 0.5, 134, 115)
 
