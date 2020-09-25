@@ -25,13 +25,17 @@ SARS_COV2_genome = SARS_COV2_genome.replace('\n','')
 # extract E gene from 26245:26472
 E_gene = SARS_COV2_genome[26245:26472]   # rna sequence
 
-# Primer pair 7 (Sequence, GC, start, end)
-forwardPrimer = ("CATTCGTTTCGGAAGAGACAGG", 0.5, 7, 28)
-reversePrimer = ("ATTGCAGCAGTACGCACACA", 0.5, 134, 115)
-primers = [forwardPrimer, reversePrimer]
+#get complementary DNA
+cDNA = pcr.getCDNA(E_gene)
 
-print(E_gene)
+#double stranded DNA
+DNA = (E_gene, cDNA)
+
+PCR_products = pcr.PCR(DNA, 30, 2)
+
+
+print(singleStrandDNAs[0])
 print
-print(len(E_gene))
+print(singleStrandDNAs[1])
 print
-print(primers[1])
+
