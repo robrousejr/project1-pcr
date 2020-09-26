@@ -59,5 +59,6 @@ def PCR(dna_segment_to_be_copied, fall_of_rate, num_cycles):
     while cycles < num_cycles:
         singleStrandDNAs = denaturation(PCRproducts)
         PCRproducts = annealing_elongation(singleStrandDNAs, primers, fall_of_rate)
+        cycles += 1
 
     return PCRproducts

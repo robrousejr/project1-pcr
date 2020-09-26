@@ -33,9 +33,6 @@ DNA = (E_gene, cDNA)
 
 PCR_products = pcr.PCR(DNA, 30, 2)
 
-
-print(singleStrandDNAs[0])
-print
-print(singleStrandDNAs[1])
-print
+#print(singleStrandDNAs[0])
+#print(singleStrandDNAs[1])
 
