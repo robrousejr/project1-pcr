@@ -31,8 +31,13 @@ cDNA = pcr.getCDNA(E_gene)
 #double stranded DNA
 DNA = (E_gene, cDNA)
 
+forwardPrimer = pcr.getPrimers()[0]
+reversePrimer = pcr.getPrimers()[1]
+
+# Sequences
+print(DNA[0][forwardPrimer[2]:reversePrimer[2]])
+print(DNA[1][forwardPrimer[2]:reversePrimer[2]])
+
 PCR_products = pcr.PCR(DNA, 30, 2)
 
-#print(singleStrandDNAs[0])
-#print(singleStrandDNAs[1])
 
