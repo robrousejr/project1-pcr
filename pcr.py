@@ -1,16 +1,15 @@
 import random
 
-# Returns CDNA from RNA
-def getCDNA(rna):
-    cdna = rna.upper() # Ensure all caps to prevent errors
-    cdna = cdna.replace("A", "X")
-    cdna = cdna.replace("T", "A")
-    cdna = cdna.replace("X", "T")
-    cdna = cdna.replace("C", "X")
-    cdna = cdna.replace("G", "C")
-    cdna = cdna.replace("X", "G")
-    cdna = cdna[::-1]  # reverse complementary strand
-    return cdna
+# Returns complement from given strand
+def getComp(strand):
+    comp = strand.upper() # Ensure all caps to prevent errors
+    comp = comp.replace("A", "X")
+    comp = comp.replace("T", "A")
+    comp = comp.replace("X", "T")
+    comp = comp.replace("C", "X")
+    comp = comp.replace("G", "C")
+    comp = comp.replace("X", "G")
+    return comp
 
 # param: a double strand dna, a tuple of 2 strings, representing 2 segments of dna from 5" to 3"
 # return: a tuple of 2 strs representing the pair of primers (5" -> 3", GC content > 40%, bases btw the 2 primers: ~200)
@@ -55,12 +54,13 @@ def annealing_elongation(singleStrandDNAs, primers, fall_of_rate = 50, prim_dist
             continue
 
         # if this is true then we are dealing with a reverse primer for the second
-        if smanip.reverse(first).count(smanip.getcomplement(r_primer)) == 1:
+        first_r = first[::-1]
+        if first_r.count(getComp(r_primer)) == 1:
             # easier to work with coding strands in 5->3
-            second = smanip.reverse(first)
+            second = first[::-1]
 
             # we need the complement to the r_primer to find the end index to get the strand we want the complement of
-            check = smanip.getcomplement(r_primer)
+            check = getComp(r_primer)
 
             # get the end index
             end = second.index(check)
@@ -68,22 +68,22 @@ def annealing_elongation(singleStrandDNAs, primers, fall_of_rate = 50, prim_dist
             # use end to get the strand we need the complement of and get the complement
             second = second[end - rate:end + prim_length]
 
-            second = smanip.getcomplement(second)
+            second = getComp(second)
 
-        elif first.count(smanip.getcomplement(f_primer)) == 1:
+        elif first.count(getComp(f_primer)) == 1:
             # no need to reverse since easier to work in 3->5
             second = first
 
             # need the complement of the primer to find start index on the strand
-            check = smanip.getcomplement(f_primer)
+            check = getComp(f_primer)
 
             # use the complement to get the start index and find the part of the strand we want
             start = second.index(check)
             second = second[start: start + prim_length + rate]
 
             # get the complement and reverse the strand so we have 3->5 uniformly in every strand
-            second = smanip.getcomplement(second)
-            second = smanip.reverse(second)
+            second = getComp(second)
+            second = second[::-1]
 
         DNA.append((first,second))
 

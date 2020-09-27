@@ -26,7 +26,8 @@ SARS_COV2_genome = SARS_COV2_genome.replace('\n','')
 E_gene = SARS_COV2_genome[26245:26472]   # rna sequence
 
 #get complementary DNA
-cDNA = pcr.getCDNA(E_gene)
+cDNA_c = pcr.getComp(E_gene)
+cDNA = cDNA_c[::-1]
 
 #double stranded DNA
 DNA = (E_gene, cDNA)
