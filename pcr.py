@@ -37,10 +37,6 @@ def annealing_elongation(singleStrandDNAs, primers, fall_of_rate = 50, prim_dist
     # ...
     f_primer = primers[0][0]
     r_primer = primers[1][0]
-
-    # calculate the rate for cycle
-    f_rate = (f_primer[3] - f_primer[2]) + random.randint(-fall_of_rate, fall_of_rate)
-    r_rate = (r_primer[3] - r_primer[2]) + random.randint(-fall_of_rate, fall_of_rate)
      
     # use any primer to get the length of a primer
     prim_length = len(f_primer)
