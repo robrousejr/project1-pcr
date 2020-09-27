@@ -32,22 +32,66 @@ def denaturation(dna_segments):
 
 # param: a list of single strand dna segments, each segment is from 5" to 3"
 # return: a list of tuples of 2 strs (2 dna segments from 5" to 3")
-def annealing_elongation(singleStrandDNAs, primers, fall_of_rate = 50):
+def annealing_elongation(singleStrandDNAs, primers, fall_of_rate = 50, prim_distance = 150):
+    DNA = []
     # ...
-    f_primer = primers[0]
-    r_primer = primers[1]
+    f_primer = primers[0][0]
+    r_primer = primers[1][0]
 
     # calculate the rate for cycle
     f_rate = (f_primer[3] - f_primer[2]) + random.randint(-fall_of_rate, fall_of_rate)
     r_rate = (r_primer[3] - r_primer[2]) + random.randint(-fall_of_rate, fall_of_rate)
+     
+    # use any primer to get the length of a primer
+    prim_length = len(f_primer)
+
+    # calculate the rate for cycle
+    rate = prim_distance + random.randint(-fall_of_rate, fall_of_rate)
 
 
+    for item in single_strands:
 
+        # first strand of the tuple DNA for the list is the initial single strand
+        first = item
+        second = ""
 
+        if first == "":
+            continue
 
-    doubleStrandedDNAs = [('a','a'),('a','a')]  # get your sequence of dnas
-    return doubleStrandedDNAs
+        # if this is true then we are dealing with a reverse primer for the second
+        if smanip.reverse(first).count(smanip.getcomplement(r_primer)) == 1:
+            # easier to work with coding strands in 5->3
+            second = smanip.reverse(first)
 
+            # we need the complement to the r_primer to find the end index to get the strand we want the complement of
+            check = smanip.getcomplement(r_primer)
+
+            # get the end index
+            end = second.index(check)
+
+            # use end to get the strand we need the complement of and get the complement
+            second = second[end - rate:end + prim_length]
+
+            second = smanip.getcomplement(second)
+
+        elif first.count(smanip.getcomplement(f_primer)) == 1:
+            # no need to reverse since easier to work in 3->5
+            second = first
+
+            # need the complement of the primer to find start index on the strand
+            check = smanip.getcomplement(f_primer)
+
+            # use the complement to get the start index and find the part of the strand we want
+            start = second.index(check)
+            second = second[start: start + prim_length + rate]
+
+            # get the complement and reverse the strand so we have 3->5 uniformly in every strand
+            second = smanip.getcomplement(second)
+            second = smanip.reverse(second)
+
+        DNA.append((first,second))
+
+    return DNA
 
 # param: gene to be copied (a tuple of 2 strs), fall of rate of DNA polymerase (int), and num_cycles to run PCR (int)
 # return: a list of double stranded dna segments
