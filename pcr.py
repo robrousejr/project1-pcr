@@ -45,7 +45,7 @@ def annealing_elongation(singleStrandDNAs, primers, fall_of_rate = 50, prim_dist
     rate = prim_distance + random.randint(-fall_of_rate, fall_of_rate)
 
 
-    for item in single_strands:
+    for item in singleStrandDNAs:
 
         # first strand of the tuple DNA for the list is the initial single strand
         first = item
