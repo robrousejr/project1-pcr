@@ -1,4 +1,7 @@
 import random
+import matplotlib.pyplot as plt
+import matplotlib
+matplotlib.use('tkagg')
 
 # Returns complement from given strand
 def getComp(strand):
@@ -86,7 +89,7 @@ def annealing_elongation(singleStrandDNAs, primers, fall_of_rate = 50, prim_dist
             second = second[::-1]
 
         DNA.append((first,second))
-
+    print("you made it here. Good Job!")
     return DNA
 
 # param: gene to be copied (a tuple of 2 strs), fall of rate of DNA polymerase (int), and num_cycles to run PCR (int)
@@ -102,3 +105,44 @@ def PCR(dna_segment_to_be_copied, fall_of_rate, num_cycles):
         cycles += 1
 
     return PCRproducts
+
+def stats(rep_dna):
+    """
+    Find statistics on replicated DNA. Finds strands, max strand length, min strand length, and average strand length.
+    Finds average GC content of strands. Plots distributions of strands
+    :param replicated_dna:
+    :return:
+    """
+
+    segment_lengths = []
+    gc_contents = []
+    for pair in rep_dna:
+        for strand in pair:
+            if strand != '':
+                segment_lengths.append(len(strand))
+
+                # Find GC contents of both strands
+                num_of_c = strand.count('C')
+                num_of_g = strand.count('G')
+                gc_content = num_of_c + num_of_g
+                gc_contents.append(gc_content)
+
+    num_of_strands = len(segment_lengths)
+
+    max_length = max(segment_lengths)
+    min_length = min(segment_lengths)
+    avg_length = sum(segment_lengths) / len(segment_lengths)
+    avg_gc_content = (sum(gc_contents) / len(gc_contents)) / avg_length
+   
+    hist = plt.hist(segment_lengths)
+    plt.xlabel('Strand Lengths')
+    plt.ylabel('Frequency')
+    plt.title('Distribution of Strand Lengths')
+    print(f'Total Strands found:{num_of_strands}')
+    print(f'Average GC Content:{avg_gc_content}%', )
+    print(f'Max Length:{max_length}')
+    print(f'Min Length:{min_length}')
+    print(f'Average Length:{avg_length}')
+    plt.show()
+
+    return

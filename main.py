@@ -39,6 +39,7 @@ reversePrimer = pcr.getPrimers()[1]
 print(DNA[0][forwardPrimer[2]:reversePrimer[2]])
 print(DNA[1][forwardPrimer[2]:reversePrimer[2]])
 
-PCR_products = pcr.PCR(DNA, 30, 2)
+PCR_products = pcr.PCR(DNA, 30, 20)
+pcr.stats(PCR_products)
 
 
