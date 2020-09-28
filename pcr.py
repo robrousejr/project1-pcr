@@ -38,17 +38,28 @@ def annealing_elongation(singleStrandDNAs, primers, fall_of_rate = 50, prim_dist
     DNA = []
     # ...
     f_primer = primers[0][0]
+    c_f_primer = getComp(f_primer)
     r_primer = primers[1][0]
+    c_r_primer = getComp(r_primer)
+    c_r_primer = c_r_primer[::-1]
+
+
      
     # use any primer to get the length of a primer
     prim_length = len(f_primer)
+    print("prim_lenght")
+    print(prim_length)
+    print()
 
     # calculate the rate for cycle
     rate = prim_distance + random.randint(-fall_of_rate, fall_of_rate)
+    print("\nrate:")
+    print(rate)
 
 
     for item in singleStrandDNAs:
-
+        print("item")
+        print(item)
         # first strand of the tuple DNA for the list is the initial single strand
         first = item
         second = ""
@@ -57,28 +68,28 @@ def annealing_elongation(singleStrandDNAs, primers, fall_of_rate = 50, prim_dist
             continue
 
         # if this is true then we are dealing with a reverse primer for the second
-        first_r = first[::-1]
-        if first_r.count(getComp(r_primer)) == 1:
+        if first.find(c_r_primer) != -1:
             # easier to work with coding strands in 5->3
-            second = first[::-1]
+            second = first
 
             # we need the complement to the r_primer to find the end index to get the strand we want the complement of
-            check = getComp(r_primer)
+            check = c_r_primer
 
             # get the end index
             end = second.index(check)
 
             # use end to get the strand we need the complement of and get the complement
-            second = second[end - rate:end + prim_length]
+            second = second[end:end + prim_length + rate]
 
             second = getComp(second)
+            second = second[::-1]
 
-        elif first.count(getComp(f_primer)) == 1:
+        elif first.find(c_f_primer) != -1:
             # no need to reverse since easier to work in 3->5
             second = first
 
             # need the complement of the primer to find start index on the strand
-            check = getComp(f_primer)
+            check = c_f_primer
 
             # use the complement to get the start index and find the part of the strand we want
             start = second.index(check)
@@ -89,8 +100,9 @@ def annealing_elongation(singleStrandDNAs, primers, fall_of_rate = 50, prim_dist
             second = second[::-1]
 
         DNA.append((first,second))
-    print("you made it here. Good Job!")
+
     return DNA
+    
 
 # param: gene to be copied (a tuple of 2 strs), fall of rate of DNA polymerase (int), and num_cycles to run PCR (int)
 # return: a list of double stranded dna segments
@@ -102,6 +114,8 @@ def PCR(dna_segment_to_be_copied, fall_of_rate, num_cycles):
     while cycles < num_cycles:
         singleStrandDNAs = denaturation(PCRproducts)
         PCRproducts = annealing_elongation(singleStrandDNAs, primers, fall_of_rate)
+        for item in PCRproducts:
+            print(item)
         cycles += 1
 
     return PCRproducts
