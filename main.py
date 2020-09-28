@@ -14,32 +14,45 @@ import os
 import numpy
 import pcr as pcr
 
+print("Reading the fasta file...")
 with open('sequence.fasta') as file:
     comments = file.readline()
     SARS_COV2_genome = file.read()
 
 file.close()
 
-SARS_COV2_genome = SARS_COV2_genome.replace('\n','')
+# validate the file
+SARS_COV2_genome = SARS_COV2_genome.replace('\n', '')
 
 # extract E gene from 26245:26472
 E_gene = SARS_COV2_genome[26245:26472]   # rna sequence
 
+# validate gene extracted
+E_gene = E_gene.upper()
+
 #get complementary DNA
 cDNA_c = pcr.getComp(E_gene)
-cDNA = cDNA_c[::-1]
+E_gene = E_gene[::-1]
 
 #double stranded DNA
-DNA = (E_gene, cDNA)
+DNA = (E_gene, cDNA_c)
 
+# get the primers
 forwardPrimer = pcr.getPrimers()[0]
 reversePrimer = pcr.getPrimers()[1]
 
+# print the primers
+print("Forward Primer: " + forwardPrimer[0])
+print("Reverse Primer: " + reversePrimer[0])
+
 # Sequences
-print(DNA[0][forwardPrimer[2]:reversePrimer[2]])
-print(DNA[1][forwardPrimer[2]:reversePrimer[2]])
+# print DNA strands to be copied
+print(DNA[0])
+print(DNA[1])
 
-PCR_products = pcr.PCR(DNA, 30, 20)
+# PCR cycle begin...
+PCR_products = pcr.PCR(DNA, 50, 10)
+
+# Display the statistics of the PCR cycle
 pcr.stats(PCR_products)
-
 
