@@ -1,9 +1,9 @@
-#Introduction to bioinformatics
-#Project 1
-#PCR Simulation with Python
-#Genome E
-#26245-26472
-#protein_id="YP_009724392.1"
+# Introduction to bioinformatics
+# Project 1
+# PCR Simulation with Python
+# Genome E
+# 26245-26472
+# protein_id="YP_009724392.1"
 #"""
 #Rob Rouse
 #Yuvraj Subedi

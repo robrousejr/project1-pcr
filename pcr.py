@@ -1,12 +1,11 @@
+# import required libraries
 import random
 import matplotlib.pyplot as plt
 import matplotlib
-
 matplotlib.use('tkagg')
 
-
 # param: a DNA strand
-# Returns complement from given strand
+# Return: complement from given strand
 def getComp(strand):
     comp = strand.upper()  # Ensure all caps to prevent errors
     comp = comp.replace("A", "X")
@@ -15,163 +14,237 @@ def getComp(strand):
     comp = comp.replace("C", "X")
     comp = comp.replace("G", "C")
     comp = comp.replace("X", "G")
+
     return comp
 
 
 # param: null
 # return: a tuple of two tuples where each tuple contain primers sequence, GC, start, and end position.
 def getPrimers():
-    # Primer pair 7 (Sequence, GC, start, end)
+    # Primer pair (Sequence, GC, start, end)
     forwardPrimer = ("TGTACTCATTCGTTTCGGAA", 0.5, 7, 28)
     reversePrimer = ("AAGGACTAGAAGACCAGATT", 0.5, 134, 115)
     primers = (forwardPrimer, reversePrimer)
+
     return primers
 
 
 # param: a list of tuples of 2 strs, representing double stranded dna segments
 # return: a list of single strand dna segments
 def denaturation(dna_segments):
+
+    # list to store single strands DNA
     single_strands_DNA = []
+
+    # iterate through all DNA items in DNA segments
     for item in dna_segments:
+
+        # append the single strands DNA to the list
         single_strands_DNA.append(item[0])
         single_strands_DNA.append(item[1])
+
+    # return the list of single strands DNA
     return single_strands_DNA
 
 
-# param: a list of single strand dna segments, each segment is from 5" to 3"
-# return: a list of tuples of 2 strs (2 dna segments from 5" to 3")
-def annealing_elongation(singleStrandDNAs, primers, fall_of_rate=50, prim_distance=200):
-    DNA = []
-    # ...
-    f_primer = primers[0][0]
-    c_f_primer = getComp(f_primer)
-    r_primer = primers[1][0]
-    c_r_primer = getComp(r_primer)
-    c_r_primer = c_r_primer[::-1]
+# param: a list of single strand DNAs, primer pair, and fall of rate
+# return: a list of tuples of 2 strands of DNA
+def annealing_elongation(singleStrandDNAs, primers, fall_of_rate=50):
 
-    # use any primer to get the length of a primer
-    f_prim_length = 22  # len(f_primer)
-    r_prim_length = 20  # len(r_primer)
-    # print("prim_lenght")
-    # print(f_prim_length)
-    # print(r_prim_length)
-    # print()
+    # For the annealing and elongation, Primers are needed
+    # Pass the primers to the single strands of DNA
+    # Bind them and extend until the fall of rate or the end of DNA segment
 
-    # calculate the rate for cycle
-    # rate = prim_distance + random.randint(-fall_of_rate, fall_of_rate)
-    # print("\nrate:" + str(rate))
+    # Get the primer sequence from primers tuple
 
+    # Get forward primer
+    forward_primer = primers[0][0]
+
+    # Get reverse primer
+    reverse_primer = primers[1][0]
+
+    # get complement of forward and reverse primers
+    comp_forward_primer = getComp(forward_primer)
+    comp_reverse_primer = getComp(reverse_primer)
+    comp_reverse_primer = comp_reverse_primer[::-1]
+
+    # set the length of primers
+    primer_length = 20
+
+    # list to store DNA result after annealing and elongation part
+    resultDNA = []
+
+    # iterate through every single strand to anneal and elongate the DNA strand
     for item in singleStrandDNAs:
 
-        rate = prim_distance + random.randint(-fall_of_rate, fall_of_rate)
-        # print("\nrate:")
-        # print(rate)
+        # set the rate
+        # d + r
+        # d = 200, r = random number between (-50, 50)
+        rate = 200 + random.randint(-fall_of_rate, fall_of_rate)
 
-        # print("item: ")
-        # print(item)
-        # first strand of the tuple DNA for the list is the initial single strand
-        first = item
-        second = ""
+        # copy the item iterating to the firstDNAStrand variable
+        # first strand of the list is the first signle strand to be worked on
+        firstDNAStrand = item
 
-        if first == "":
+        # if the firstDNAStrand is empty, continue
+        if firstDNAStrand == "":
             continue
 
-        # if this is true then we are dealing with a reverse primer for the second
-        if first.find(c_r_primer) != -1:
-            # easier to work with coding strands in 5->3
-            second = first
+        secondDNAStrand = ""
 
-            # we need the complement to the r_primer to find the end index to get the strand we want the complement of
-            check = c_r_primer
+        # if the complementary reverse primer is found in firstDNAStrand
+        # then the work is to be done is with the second
+        if firstDNAStrand.find(comp_reverse_primer) != -1:
 
-            # get the end index
-            end = second.index(check)
+            # Complement the reverse primer to find the end index
+            checkPrimer = comp_reverse_primer
 
-            # use end to get the strand we need the complement of and get the complement
-            second = second[end:end + r_prim_length + rate]
+            # Get 5 -> 3 strand
+            secondDNAStrand = firstDNAStrand
 
-            second = getComp(second)
-            second = second[::-1]
+            # get the end index of the DNA strand by checking with with the complement of reverse primer
+            endIndex = secondDNAStrand.index(checkPrimer)
 
-        elif first.find(c_f_primer) != -1:
-            # no need to reverse since easier to work in 3->5
-            second = first
+            # Get the strand we need the complement of
+            # Get the complement
+            # Use endIndex to do so.
+            secondDNAStrand = secondDNAStrand[endIndex:endIndex + primer_length + rate]
 
-            # need the complement of the primer to find start index on the strand
-            check = c_f_primer
+            # Get complement of the secondDNAStrand
+            secondDNAStrand = getComp(secondDNAStrand)
 
-            # use the complement to get the start index and find the part of the strand we want
-            start = second.index(check)
-            second = second[start: start + f_prim_length + rate]
+            # Reverse the secondDNAStrand
+            secondDNAStrand = secondDNAStrand[::-1]
 
-            # get the complement and reverse the strand so we have 3->5 uniformly in every strand
-            second = getComp(second)
-            second = second[::-1]
+        # if the first condition is not true
+        # which is if complementary of forward primer is found in firstDNAStrand
+        elif firstDNAStrand.find(comp_forward_primer) != -1:
 
-        DNA.append((first, second))
+            # Complement the forward primer to find the end index
+            checkPrimer = comp_forward_primer
 
-    return DNA
+            secondDNAStrand = firstDNAStrand
+
+            # get the start index of the DNA strand by checking with with the complement of reverse primer
+            startIndex = secondDNAStrand.index(checkPrimer)
+
+            # Get the strand we need the complement of
+            # Get the complement
+            # Use startIndex to do so.
+            secondDNAStrand = secondDNAStrand[startIndex: startIndex + primer_length + rate]
+
+            # Get complement of the secondDNAStrand
+            secondDNAStrand = getComp(secondDNAStrand)
+
+            # Reverse the secondDNAStrand
+            secondDNAStrand = secondDNAStrand[::-1]
+
+        # Append the result DNA with the result obtained from annealing and elongation
+        resultDNA.append((firstDNAStrand, secondDNAStrand))
+
+    # return the final resultDNA obtained after annealing and elongation.
+    return resultDNA
 
 
 # param: gene to be copied (a tuple of 2 strs), fall of rate of DNA polymerase (int), and num_cycles to run PCR (int)
 # return: a list of double stranded dna segments
 def PCR(dna_segment_to_be_copied, fall_of_rate, num_cycles):
-    # ....
-    primers = getPrimers()
-    cycles = 0
-    PCRproducts = [dna_segment_to_be_copied]
-    while cycles < num_cycles:
-        singleStrandDNAs = denaturation(PCRproducts)
-        # print(singleStrandDNAs)
-        # for item in singleStrandDNAs:
-        #    print(item)
-        PCRproducts = annealing_elongation(singleStrandDNAs, primers, fall_of_rate)
-        print("\n cycle " + str(cycles + 1) + " completed")
-        # for item in PCRproducts:
-        # print(item)
-        cycles += 1
-    # print("Total cyles:" + str(cycles))
 
+    # get the primers from getPrimers() function
+    primers = getPrimers()
+
+    # initialize the cycles to 0 before the start of the PCR process
+    cycles = 0
+
+    # Store the DNA segments to be copied in PCRproducts list
+    PCRproducts = [dna_segment_to_be_copied]
+
+    # Begin the PCR cycles
+    # Run the cycles for the desired number of cycles number passed as argument
+    while cycles < num_cycles:
+
+        # Denature the list of double-stranded DNAs at first
+        # And store the denatured single strands of DNAs in singleStrandDNAs list
+        singleStrandDNAs = denaturation(PCRproducts)
+
+        # Begin the anealing and elongation process
+        # store the obtained result in PCRproducts
+        PCRproducts = annealing_elongation(singleStrandDNAs, primers, fall_of_rate)
+
+        # Print the number of cycles completed after completion of each cyle
+        print(" Cycle " + str(cycles + 1) + " completed \n")
+
+        cycles += 1
+
+    # Return the PCR products obtained.
     return PCRproducts
 
+# param: Replicated list of DNA strands
+# return: void
+def stats(replicatedDNAs):
 
-def stats(rep_dna):
-    """
-    Find statistics on replicated DNA. Finds strands, max strand length, min strand length, and average strand length.
-    Finds average GC content of strands. Plots distributions of strands
-    :param replicated_dna:
-    :return:
-    """
+    # Get the statistics of the PCR results
+    # Calculate:
+    # Total Strands found, Average GC, Max length, Min length, Average Length
+    # Distribution of the lengths of DNA fragments in graph using matplotlib
 
-    segment_lengths = []
-    gc_contents = []
-    for pair in rep_dna:
-        for strand in pair:
-            if strand != '':
-                segment_lengths.append(len(strand))
+    # list of lengths of DNA segments
+    lengthsOfSegments = []
 
-                # Find GC contents of both strands
-                num_of_c = strand.count('C')
-                num_of_g = strand.count('G')
-                gc_content = num_of_c + num_of_g
-                gc_contents.append(gc_content)
+    # list of GC contents
+    GCcontents = []
 
-    num_of_strands = len(segment_lengths)
+    # iterate through each pair of replicated DNAs and each strand in a pair
+    for DNApair in replicatedDNAs:
+        for DNAstrand in DNApair:
 
-    max_length = max(segment_lengths)
-    min_length = min(segment_lengths)
-    avg_length = sum(segment_lengths) / len(segment_lengths)
-    avg_gc_content = (sum(gc_contents) / len(gc_contents)) / avg_length
+            # if the strand is not empty, calculate the statistics
+            if DNAstrand != '':
+                lengthsOfSegments.append(len(DNAstrand))
 
-    hist = plt.hist(segment_lengths)
-    plt.xlabel('Strand Lengths')
-    plt.ylabel('Frequency')
-    plt.title('Distribution of Strand Lengths')
-    print(f'Total Strands found:{num_of_strands}')
-    print(f'Average GC Content:{avg_gc_content}%', )
-    print(f'Max Length:{max_length}')
-    print(f'Min Length:{min_length}')
-    print(f'Average Length:{avg_length}')
+                # Find GC contents of the strands
+                # Count number of C
+                num_of_c = DNAstrand.count('C')
+
+                # Count number of G
+                num_of_g = DNAstrand.count('G')
+
+                # Get the total of G and C
+                GCcontent = num_of_c + num_of_g
+
+                # Append it to the GCcontents list
+                GCcontents.append(GCcontent)
+
+    # Get the number of total strands obtained
+    totalStrands = len(lengthsOfSegments)
+
+    # Get the maximum length of the strand
+    maximum = max(lengthsOfSegments)
+
+    # Get the minimum length of the strand
+    minimum = min(lengthsOfSegments)
+
+    # Get the average length of the strands
+    avg = sum(lengthsOfSegments) / len(lengthsOfSegments)
+
+    # Get average GC content
+    avg_gc = (sum(GCcontents) / len(GCcontents)) / avg
+
+    # plot graph using matplotlib
+    # x-axis: Lengths of strands
+    # y-axis: Frequency of strands occurance
+    plt.hist(lengthsOfSegments)
+    plt.xlabel('Lengths of strands')
+    plt.ylabel('Frequency of strands')
+    plt.title('Distribution of the Lengths of DNA Fragments')
+
+    # Display the statistics
+    print(f'Number of DNA fragments found:{totalStrands}')
+    print(f'Average GC Content of the segments in percentage:{avg_gc * 100}%', )
+    print(f'Maximum length of the DNA fragments:{maximum}')
+    print(f'Min length of the DNA fragments:{minimum}')
+    print(f'Average length of the DNA fragments:{avg}')
     plt.show()
 
-    return
+    # return nothing on this function
+    pass
